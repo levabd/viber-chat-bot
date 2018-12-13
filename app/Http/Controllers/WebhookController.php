@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Viber\Api\Event\Type;
 use Viber\Api\Message\Text;
-use Viber\Api\Message\Picture;
 use Viber\Api\Sender;
 use Viber\Api\Keyboard;
 use Viber\Api\Keyboard\Button;
@@ -89,7 +88,7 @@ class WebhookController extends Controller
             if (! $user->subscribed) {
                 $user->subscribed = true;
                 $user->session_id = null;
-                                $user->save();
+                $user->save();
             } // if unsubscribed
 
             if ($user->session_id === null || Carbon::now()->subHours(12)->gt($user->session->updated_at)) {
@@ -134,7 +133,7 @@ class WebhookController extends Controller
                     case 15:
                         $this->handleMessage15($user, $user->session, $request);
                         break;
-case 211:
+                    case 211:
                         $this->handleMessage211($user, $user->session, $request);
                         break;
                     case 212:
@@ -541,39 +540,9 @@ case 211:
         } // if empty
 
         if ($request['message']['text'] == 'next') {
-            $this->sendMessage24($user, $session);
-        } else {
-            $this->sendMessage23($user, $session);
-        } // if next
-    }
-
-    private function handleMessage24(ViberUser $user, Session $session, Request $request)
-    {
-        Log::debug('handleMessage24');
-        if (empty($request['message']) || empty($request['message']['text'])) {
-            $this->sendMessage24($user, $session);
-            return;
-        } // if empty
-
-        if ($request['message']['text'] == 'next') {
-            $this->sendMessage25($user, $session);
-        } else {
-            $this->sendMessage24($user, $session);
-        } // if next
-    }
-
-    private function handleMessage25(ViberUser $user, Session $session, Request $request)
-    {
-        Log::debug('handleMessage25');
-        if (empty($request['message']) || empty($request['message']['text'])) {
-            $this->sendMessage25($user, $session);
-            return;
-        } // if empty
-
-        if ($request['message']['text'] == 'next') {
             $this->sendMessage6($user, $session);
         } else {
-            $this->sendMessage25($user, $session);
+            $this->sendMessage23($user, $session);
         } // if next
     }
 
@@ -609,14 +578,16 @@ case 211:
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText('Изиклин')
+        $buttons[] = (new Button())->setText(__('message.drug1'))
             ->setActionType('reply')
             ->setActionBody('drug1')
-            ->setColumns(3);
-        $buttons[] = (new Button())->setText('Фортранс')
+            ->setColumns(3)
+            ->setBgMedia(asset('pictures/two.png'));
+        $buttons[] = (new Button())->setText(__('message.drug2'))
             ->setActionType('reply')
             ->setActionBody('drug2')
-            ->setColumns(3);
+            ->setColumns(3)
+            ->setBgMedia(asset('pictures/two.png'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -639,11 +610,13 @@ case 211:
         $buttons[] = (new Button())->setText(__('message.stage.1'))
             ->setActionType('reply')
             ->setActionBody('1')
-            ->setColumns(3);
+            ->setColumns(3)
+            ->setBgMedia(asset('pictures/two.png'));
         $buttons[] = (new Button())->setText(__('message.stage.2'))
             ->setActionType('reply')
             ->setActionBody('2')
-            ->setColumns(3);
+            ->setColumns(3)
+            ->setBgMedia(asset('pictures/two.png'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -666,11 +639,13 @@ case 211:
         $buttons[] = (new Button())->setText(__('message.month.' . $month))
             ->setActionType('reply')
             ->setActionBody('0')
-            ->setColumns(3);
+            ->setColumns(3)
+            ->setBgMedia(asset('pictures/two.png'));
         $buttons[] = (new Button())->setText(__('message.month.' . ($month < 12 ? $month + 1 : 1)))
             ->setActionType('reply')
             ->setActionBody('1')
-            ->setColumns(3);
+            ->setColumns(3)
+            ->setBgMedia(asset('pictures/two.png'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -694,10 +669,22 @@ case 211:
 
         for ($y = 0; $y < 7; $y ++) {
             for ($x = 0; $x < count($calendar); $x ++) {
-                $buttons[] = (new Button())->setText($calendar[$x][$y] > 0 ? $calendar[$x][$y] : "")
-                    ->setActionType('reply')
+                if ($calendar[$x][$y] > 0) {
+                    if ($calendar[$x][$y] > $today) {
+                        if ($y < 5) {
+                            $fontColor = config('color.black');
+                        } else {
+                            $fontColor = config('color.red');
+                        } // if
+                    } else {
+                        $fontColor = config('color.gray');
+                    } // if today
+                    $button = (new Button())->setText("<font color='$fontColor'><b>" . $calendar[$x][$y] . "</b></font>")->setBgMedia(asset('pictures/data.png'));
+                } else {
+                    $button = (new Button())->setText("")->setBgColor(config('keyboard.button_color'));
+                } // if empty day
+                $buttons[] = $button->setActionType('reply')
                     ->setActionBody($calendar[$x][$y] > $today ? $calendar[$x][$y] : 0)
-                    ->setBgColor($calendar[$x][$y] > $today ? config('viber.color.green') : config('viber.color.gray'))
                     ->setColumns(1)
                     ->setRows(1);
             } // for x
@@ -725,52 +712,62 @@ case 211:
             ->setActionType('reply')
             ->setActionBody('09:00')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
         $buttons[] = (new Button())->setText('10:00')
             ->setActionType('reply')
             ->setActionBody('10:00')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
         $buttons[] = (new Button())->setText('11:00')
             ->setActionType('reply')
             ->setActionBody('11:00')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
         $buttons[] = (new Button())->setText('12:00')
             ->setActionType('reply')
             ->setActionBody('12:00')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
         $buttons[] = (new Button())->setText('13:30')
             ->setActionType('reply')
             ->setActionBody('13:30')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
         $buttons[] = (new Button())->setText('14:30')
             ->setActionType('reply')
             ->setActionBody('14:30')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
         $buttons[] = (new Button())->setText('15:30')
             ->setActionType('reply')
             ->setActionBody('15:30')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
         $buttons[] = (new Button())->setText('16:00')
             ->setActionType('reply')
             ->setActionBody('16:00')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
         $buttons[] = (new Button())->setText('17:00')
             ->setActionType('reply')
             ->setActionBody('17:00')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
         $buttons[] = (new Button())->setText('18:00')
             ->setActionType('reply')
             ->setActionBody('18:00')
             ->setColumns(6)
-            ->setRows(1);
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -793,7 +790,11 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.restart'))
             ->setActionType('reply')
-            ->setActionBody('restart');
+            ->setActionBody('restart')
+            ->setSilent(true)
+            ->setColumns(6)
+            ->setRows(1)
+            ->setBgMedia(asset('pictures/one.png'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -815,41 +816,46 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
-            
-            $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
-                ->setReceiver($user->viber_id)
-                ->setText(__('message.11'))
-                ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-                    ->setButtons($buttons)));
-            Log::debug('sendMessage response');
-        if ($response !== null) {
-            Log::debug($response->getData());
-        } // if response not null
-    }
-    private function sendMessage12(ViberUser $user, Session $session)
-    {
-        Log::debug('WebhookController->sendMessage12');
-        $session->last_message_id = 12;
-        $session->save();
-        
-        $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
-        ->setActionType('reply')
-        ->setActionBody('next');
-        
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
+
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
-            ->setText(__('message.12'))
+            ->setText(__('message.11'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-                ->setButtons($buttons)));
-        
+            ->setButtons($buttons)));
         Log::debug('sendMessage response');
         if ($response !== null) {
             Log::debug($response->getData());
         } // if response not null
     }
-    
+
+    private function sendMessage12(ViberUser $user, Session $session)
+    {
+        Log::debug('WebhookController->sendMessage12');
+        $session->last_message_id = 12;
+        $session->save();
+
+        $buttons = array();
+        $buttons[] = (new Button())->setText(__('message.next'))
+            ->setActionType('reply')
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
+
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+            ->setReceiver($user->viber_id)
+            ->setText(__('message.12'))
+            ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
+            ->setButtons($buttons)));
+
+        Log::debug('sendMessage response');
+        if ($response !== null) {
+            Log::debug($response->getData());
+        } // if response not null
+    }
+
     private function sendMessage13(ViberUser $user, Session $session)
     {
         Log::debug('WebhookController->sendMessage13');
@@ -859,7 +865,9 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -883,14 +891,16 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
-            
-            $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
-                ->setReceiver($user->viber_id)
-                ->setText(__('message.14'))
-                ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-                    ->setButtons($buttons)));
-            Log::debug('sendMessage response');
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
+
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+            ->setReceiver($user->viber_id)
+            ->setText(__('message.14'))
+            ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
+            ->setButtons($buttons)));
+        Log::debug('sendMessage response');
         if ($response !== null) {
             Log::debug($response->getData());
         } // if response not null
@@ -905,14 +915,16 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
-            
-            $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
-                ->setReceiver($user->viber_id)
-                ->setText(__('message.15'))
-                ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-                    ->setButtons($buttons)));
-            Log::debug('sendMessage response');
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
+
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+            ->setReceiver($user->viber_id)
+            ->setText(__('message.15'))
+            ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
+            ->setButtons($buttons)));
+        Log::debug('sendMessage response');
         if ($response !== null) {
             Log::debug($response->getData());
         } // if response not null
@@ -927,14 +939,16 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
-            
-            $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
-                ->setReceiver($user->viber_id)
-                ->setText(__('message.211'))
-                ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-                    ->setButtons($buttons)));
-            Log::debug('sendMessage response');
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
+
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+            ->setReceiver($user->viber_id)
+            ->setText(__('message.211'))
+            ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
+            ->setButtons($buttons)));
+        Log::debug('sendMessage response');
         if ($response !== null) {
             Log::debug($response->getData());
         } // if response not null
@@ -949,7 +963,9 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -973,13 +989,13 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
 
-        $response = app('viber_bot')->sendMessage((new Picture())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
-            ->setMedia(asset('pictures/fortrans_instruction_1.jpg'))
-            ->setThumbnail(asset('pictures/fortrans_instruction_1.jpg'))
-            ->setText(__('message.recomendation'))
+            ->setText(__('message.21'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
         Log::debug('sendMessage response');
@@ -997,13 +1013,13 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
 
-        $response = app('viber_bot')->sendMessage((new Picture())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
-            ->setMedia(asset('pictures/fortrans_instruction_2.jpg'))
-            ->setThumbnail(asset('pictures/fortrans_instruction_2.jpg'))
-            ->setText(__('message.recomendation'))
+            ->setText(__('message.22'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
         Log::debug('sendMessage response');
@@ -1021,61 +1037,13 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
 
-        $response = app('viber_bot')->sendMessage((new Picture())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
-            ->setMedia(asset('pictures/fortrans_instruction_3.jpg'))
-            ->setThumbnail(asset('pictures/fortrans_instruction_3.jpg'))
-            ->setText(__('message.recomendation'))
-            ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-            ->setButtons($buttons)));
-        Log::debug('sendMessage response');
-        if ($response !== null) {
-            Log::debug($response->getData());
-        } // if response not null
-    }
-
-    private function sendMessage24(ViberUser $user, Session $session)
-    {
-        Log::debug('WebhookController->sendMessage24');
-        $session->last_message_id = 24;
-        $session->save();
-
-        $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
-            ->setActionType('reply')
-            ->setActionBody('next');
-
-        $response = app('viber_bot')->sendMessage((new Picture())->setSender((new Sender())->setName(config('viber.bot.name')))
-            ->setReceiver($user->viber_id)
-            ->setMedia(asset('pictures/fortrans_instruction_4.jpg'))
-            ->setThumbnail(asset('pictures/fortrans_instruction_4.jpg'))
-            ->setText(__('message.recomendation'))
-            ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-            ->setButtons($buttons)));
-        Log::debug('sendMessage response');
-        if ($response !== null) {
-            Log::debug($response->getData());
-        } // if response not null
-    }
-
-    private function sendMessage25(ViberUser $user, Session $session)
-    {
-        Log::debug('WebhookController->sendMessage25');
-        $session->last_message_id = 25;
-        $session->save();
-
-        $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
-            ->setActionType('reply')
-            ->setActionBody('next');
-
-        $response = app('viber_bot')->sendMessage((new Picture())->setSender((new Sender())->setName(config('viber.bot.name')))
-            ->setReceiver($user->viber_id)
-            ->setMedia(asset('pictures/fortrans_instruction_5.jpg'))
-            ->setThumbnail(asset('pictures/fortrans_instruction_5.jpg'))
-            ->setText(__('message.recomendation'))
+            ->setText(__('message.23'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
         Log::debug('sendMessage response');
@@ -1093,41 +1061,45 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
-            
-            $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
-                ->setReceiver($user->viber_id)
-                ->setText(__('message.221'))
-                ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-                    ->setButtons($buttons)));
-            Log::debug('sendMessage response');
-        if ($response !== null) {
-            Log::debug($response->getData());
-        } // if response not null
-    }
-    
-    private function sendMessage222(ViberUser $user, Session $session)
-    {
-        Log::debug('WebhookController->sendMessage222');
-        $session->last_message_id = 222;
-        $session->save();
-        
-        $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
-        ->setActionType('reply')
-        ->setActionBody('next');
-        
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
+
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
-            ->setText(__('message.222'))
+            ->setText(__('message.221'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-                ->setButtons($buttons)));
+            ->setButtons($buttons)));
         Log::debug('sendMessage response');
         if ($response !== null) {
             Log::debug($response->getData());
         } // if response not null
     }
-    
+
+    private function sendMessage222(ViberUser $user, Session $session)
+    {
+        Log::debug('WebhookController->sendMessage222');
+        $session->last_message_id = 222;
+        $session->save();
+
+        $buttons = array();
+        $buttons[] = (new Button())->setText(__('message.next'))
+            ->setActionType('reply')
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
+
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+            ->setReceiver($user->viber_id)
+            ->setText(__('message.222'))
+            ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
+            ->setButtons($buttons)));
+        Log::debug('sendMessage response');
+        if ($response !== null) {
+            Log::debug($response->getData());
+        } // if response not null
+    }
+
     private function sendMessage223(ViberUser $user, Session $session)
     {
         Log::debug('WebhookController->sendMessage223');
@@ -1137,7 +1109,9 @@ case 211:
         $buttons = array();
         $buttons[] = (new Button())->setText(__('message.next'))
             ->setActionType('reply')
-            ->setActionBody('next');
+            ->setActionBody('next')
+            ->setSilent(true)
+            ->setBgMedia(asset('pictures/one.png'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)

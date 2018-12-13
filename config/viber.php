@@ -8,10 +8,12 @@ return [
     ],
 
     'keyboard' => [
-        'bg_color' => '#f6f7f9'
-    ],
+        'bg_color' => '#f6f7f9',
+        'button_color' => '#fdfdfd'
+],
     "color" => [
-        "gray" => "#A0A0A0",
-        "green" => "#00AA00"
+        "gray" => "#D7D7D7",
+        "red" => "#B00000",
+        "black" => "#1C1C1C",
     ]
 ];

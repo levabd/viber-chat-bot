@@ -1,5 +1,4 @@
 <?php
-
 namespace Viber\Api\Keyboard;
 
 use Viber\Api\Entity;
@@ -17,6 +16,7 @@ use Viber\Api\Entity;
  */
 class Button extends Entity
 {
+
     /**
      * Button width in columns (1-6)
      *
@@ -85,7 +85,8 @@ class Button extends Entity
     protected $ActionBody;
 
     /**
-     * URL of image to place on top of background (if any). Can be a partially
+     * URL of image to place on top of background (if any).
+     * Can be a partially
      * transparent image that will allow showing some of the background.
      * Will be placed with aspect to fill logic.
      *
@@ -96,7 +97,8 @@ class Button extends Entity
     protected $Image;
 
     /**
-     * Text to be displayed on the button. Can contain some HTML tags.
+     * Text to be displayed on the button.
+     * Can contain some HTML tags.
      *
      * Free text. Valid and allowed HTML tags Max 250 characters. If the text
      * is too long to display on the button it will be cropped and ended
@@ -125,7 +127,8 @@ class Button extends Entity
     protected $TextHAlign;
 
     /**
-     * Text opacity. Range: 0-100
+     * Text opacity.
+     * Range: 0-100
      *
      * @var integer
      */
@@ -139,7 +142,14 @@ class Button extends Entity
     protected $TextSize;
 
     /**
-     * {@inheritDoc}
+     *
+     * @var boolean
+     */
+    protected $silent = false;
+
+    /**
+     *
+     * {@inheritdoc}
      */
     public function toArray()
     {
@@ -158,9 +168,9 @@ class Button extends Entity
             'TextHAlign' => $this->getTextHAlign(),
             'TextOpacity' => $this->getTextOpacity(),
             'TextSize' => $this->getTextSize(),
-            "Silent"=> true,
-            "BgMediaScaleType"=> "crop"
-                        ];
+            'Silent' => $this->getSilent(),
+            "BgMediaScaleType" => "crop"
+        ];
     }
 
     /**
@@ -176,8 +186,9 @@ class Button extends Entity
     /**
      * Set the value of Button width in columns (1-6)
      *
-     * @param integer Columns
-     *
+     * @param
+     *            integer Columns
+     *            
      * @return self
      */
     public function setColumns($Columns)
@@ -200,8 +211,9 @@ class Button extends Entity
     /**
      * Set the value of Button height in rows (1-2)
      *
-     * @param integer Rows
-     *
+     * @param
+     *            integer Rows
+     *            
      * @return self
      */
     public function setRows($Rows)
@@ -224,8 +236,9 @@ class Button extends Entity
     /**
      * Set the value of Background color of button
      *
-     * @param string BgColor
-     *
+     * @param
+     *            string BgColor
+     *            
      * @return self
      */
     public function setBgColor($BgColor)
@@ -248,8 +261,9 @@ class Button extends Entity
     /**
      * Set the value of Type of the background media ("picture" or "gif")
      *
-     * @param string BgMediaType
-     *
+     * @param
+     *            string BgMediaType
+     *            
      * @return self
      */
     public function setBgMediaType($BgMediaType)
@@ -272,8 +286,9 @@ class Button extends Entity
     /**
      * Set the value of URL for background media content.
      *
-     * @param string BgMedia
-     *
+     * @param
+     *            string BgMedia
+     *            
      * @return self
      */
     public function setBgMedia($BgMedia)
@@ -296,8 +311,9 @@ class Button extends Entity
     /**
      * Set the value of When true - animated background media (gif) will loop continuously.
      *
-     * @param boolean BgLoop
-     *
+     * @param
+     *            boolean BgLoop
+     *            
      * @return self
      */
     public function setBgLoop($BgLoop)
@@ -320,8 +336,9 @@ class Button extends Entity
     /**
      * Set the value of Type of action pressing the button will perform.
      *
-     * @param string ActionType
-     *
+     * @param
+     *            string ActionType
+     *            
      * @return self
      */
     public function setActionType($ActionType)
@@ -344,8 +361,9 @@ class Button extends Entity
     /**
      * Set the value of Text for reply ActionType OR URL for "open-url".
      *
-     * @param string ActionBody
-     *
+     * @param
+     *            string ActionBody
+     *            
      * @return self
      */
     public function setActionBody($ActionBody)
@@ -356,7 +374,8 @@ class Button extends Entity
     }
 
     /**
-     * Get the value of URL of image to place on top of background (if any). Can be a partially
+     * Get the value of URL of image to place on top of background (if any).
+     * Can be a partially
      *
      * @return string
      */
@@ -366,10 +385,12 @@ class Button extends Entity
     }
 
     /**
-     * Set the value of URL of image to place on top of background (if any). Can be a partially
+     * Set the value of URL of image to place on top of background (if any).
+     * Can be a partially
      *
-     * @param string Image
-     *
+     * @param
+     *            string Image
+     *            
      * @return self
      */
     public function setImage($Image)
@@ -380,7 +401,8 @@ class Button extends Entity
     }
 
     /**
-     * Get the value of Text to be displayed on the button. Can contain some HTML tags.
+     * Get the value of Text to be displayed on the button.
+     * Can contain some HTML tags.
      *
      * @return string
      */
@@ -390,10 +412,12 @@ class Button extends Entity
     }
 
     /**
-     * Set the value of Text to be displayed on the button. Can contain some HTML tags.
+     * Set the value of Text to be displayed on the button.
+     * Can contain some HTML tags.
      *
-     * @param string Text
-     *
+     * @param
+     *            string Text
+     *            
      * @return self
      */
     public function setText($Text)
@@ -416,8 +440,9 @@ class Button extends Entity
     /**
      * Set the value of Vertical alignment of the text
      *
-     * @param string TextVAlign
-     *
+     * @param
+     *            string TextVAlign
+     *            
      * @return self
      */
     public function setTextVAlign($TextVAlign)
@@ -440,8 +465,9 @@ class Button extends Entity
     /**
      * Set the value of Horizontal align of the text
      *
-     * @param string TextHAlign
-     *
+     * @param
+     *            string TextHAlign
+     *            
      * @return self
      */
     public function setTextHAlign($TextHAlign)
@@ -452,7 +478,8 @@ class Button extends Entity
     }
 
     /**
-     * Get the value of Text opacity. Range: 0-100
+     * Get the value of Text opacity.
+     * Range: 0-100
      *
      * @return integer
      */
@@ -462,10 +489,12 @@ class Button extends Entity
     }
 
     /**
-     * Set the value of Text opacity. Range: 0-100
+     * Set the value of Text opacity.
+     * Range: 0-100
      *
-     * @param integer TextOpacity
-     *
+     * @param
+     *            integer TextOpacity
+     *            
      * @return self
      */
     public function setTextOpacity($TextOpacity)
@@ -488,14 +517,26 @@ class Button extends Entity
     /**
      * Set the value of Text size out of 3 available options: small, regular, large
      *
-     * @param string TextSize
-     *
+     * @param
+     *            string TextSize
+     *            
      * @return self
      */
     public function setTextSize($TextSize)
     {
         $this->TextSize = $TextSize;
 
+        return $this;
+    }
+
+    public function getSilent()
+    {
+        return $this->silent;
+    }
+
+    public function setSilent($silent)
+    {
+        $this->silent = $silent;
         return $this;
     }
 }
