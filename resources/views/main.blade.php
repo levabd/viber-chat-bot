@@ -17,7 +17,7 @@
 <td><a href={{ url('/sessions/'.$viberUser->id) }}>{{ $viberUser->name }}</a></td>
 <td>{{ $viberUser->completedSession->drug->name }}</td>
 <td>{{ $viberUser->completedSession->stage_num}}</td>
-<td>{{ $viberUser->completedSession->procedure_at }}</td>
+<td>{{ $viberUser->completedSession->procedure_at->format(config('viber.datetime_format')) }}</td>
 </tr>
 @endforeach
 </table>

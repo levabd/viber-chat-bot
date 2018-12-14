@@ -13,7 +13,7 @@ use Log;
 
 class StatisticTest extends TestCase
 {
-//use DatabaseTransactions;
+use DatabaseTransactions;
 
 private $viberUser;
 
@@ -32,7 +32,10 @@ private $viberUser;
     }
     
     public function testMonthStatistic() {
-        try {
+        $now = Carbon::now();
+        Log::debug("format\n"
+            .$now->format('d.m.Y H:i:s'));
+                try {
         $now = Carbon::now()->startOfMonth();
         $daysInMonth = $now->daysInMonth;
         $drug1 = Drug::where('code', 'drug1')->first();

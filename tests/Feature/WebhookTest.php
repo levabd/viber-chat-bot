@@ -16,7 +16,7 @@ use Log;
 
 class WebhookTest extends TestCase
 {
-    use DatabaseTransactions;
+    //use DatabaseTransactions;
 
     protected $mock;
 
