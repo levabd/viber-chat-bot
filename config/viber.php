@@ -14,7 +14,8 @@ return [
     "color" => [
         "gray" => "#D7D7D7",
         "red" => "#B00000",
-        "black" => "#1C1C1C"
+        "black" => "#1C1C1C",
+        "white" => "#FFFFFF"
     ],
-    "datetime_format" => "d.m.Y H:i:s"
+    "datetime_format" => "H-i d-m-Y"
 ];

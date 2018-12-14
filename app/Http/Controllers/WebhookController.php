@@ -82,10 +82,9 @@ class WebhookController extends Controller
     private function handleMessage(Request $request)
     {
         Log::debug("WebhookController->handleMessage");
-        try {
+                try {
             $user = $this->getViberUser($request->input('sender'));
-            $isWelcome = false;
-            if (! $user->subscribed) {
+                        if (! $user->subscribed) {
                 $user->subscribed = true;
                 $user->session_id = null;
                 $user->save();
@@ -97,7 +96,7 @@ class WebhookController extends Controller
                 ]);
                 $user->session_id = $session->id;
                 $user->save();
-                $this->sendMessage1($user, $session, $isWelcome ? __('message.welcome') : "");
+                $this->sendMessage1($user, $session, __('message.welcome'));
             } else {
                 switch ($user->session->last_message_id) {
                     case 1:
@@ -373,8 +372,7 @@ class WebhookController extends Controller
             $this->sendMessage12($user, $session);
             return;
         } // if empty
-
-        if ($request['message']['text'] == 'next') {
+if ($request['message']['text'] == 'next') {
             $this->sendMessage13($user, $session);
         } else {
             $this->sendMessage12($user, $session);
@@ -388,8 +386,7 @@ class WebhookController extends Controller
             $this->sendMessage13($user, $session);
             return;
         } // if empty
-
-        if ($request['message']['text'] == 'next') {
+if ($request['message']['text'] == 'next') {
             $this->sendMessage14($user, $session);
         } else {
             $this->sendMessage13($user, $session);
@@ -403,8 +400,7 @@ class WebhookController extends Controller
             $this->sendMessage14($user, $session);
             return;
         } // if empty
-
-        if ($request['message']['text'] == 'next') {
+if ($request['message']['text'] == 'next') {
             $this->sendMessage15($user, $session);
         } else {
             $this->sendMessage14($user, $session);
@@ -418,11 +414,10 @@ class WebhookController extends Controller
             $this->sendMessage15($user, $session);
             return;
         } // if empty
-
-        if ($request['message']['text'] == 'next') {
+if ($request['message']['text'] == 'next') {
             $this->sendMessage6($user, $session);
         } else {
-            $this->sendMessage18($user, $session);
+            $this->sendMessage15($user, $session);
         } // if next
     }
 
@@ -578,12 +573,12 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.drug1'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.drug1')))
             ->setActionType('reply')
             ->setActionBody('drug1')
             ->setColumns(3)
             ->setBgMedia(asset('pictures/two.png'));
-        $buttons[] = (new Button())->setText(__('message.drug2'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.drug2')))
             ->setActionType('reply')
             ->setActionBody('drug2')
             ->setColumns(3)
@@ -605,14 +600,14 @@ class WebhookController extends Controller
         Log::debug('WebhookController->sendMessage2');
         $session->last_message_id = 2;
         $session->save();
-
+        
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.stage.1'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.stage.1')))
             ->setActionType('reply')
             ->setActionBody('1')
             ->setColumns(3)
             ->setBgMedia(asset('pictures/two.png'));
-        $buttons[] = (new Button())->setText(__('message.stage.2'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.stage.2')))
             ->setActionType('reply')
             ->setActionBody('2')
             ->setColumns(3)
@@ -636,12 +631,12 @@ class WebhookController extends Controller
 
         $month = Carbon::now()->month;
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.month.' . $month))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.month.' . $month)))
             ->setActionType('reply')
             ->setActionBody('0')
             ->setColumns(3)
             ->setBgMedia(asset('pictures/two.png'));
-        $buttons[] = (new Button())->setText(__('message.month.' . ($month < 12 ? $month + 1 : 1)))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.month.' . ($month < 12 ? $month + 1 : 1))))
             ->setActionType('reply')
             ->setActionBody('1')
             ->setColumns(3)
@@ -672,18 +667,18 @@ class WebhookController extends Controller
                 if ($calendar[$x][$y] > 0) {
                     if ($calendar[$x][$y] > $today) {
                         if ($y < 5) {
-                            $fontColor = config('color.black');
+                            $fontColor = config('viber.color.black');
                         } else {
-                            $fontColor = config('color.red');
+                            $fontColor = config('viber.color.red');
                         } // if
                     } else {
-                        $fontColor = config('color.gray');
+                        $fontColor = config('viber.color.gray');
                     } // if today
                     $button = (new Button())->setText("<font color='$fontColor'><b>" . $calendar[$x][$y] . "</b></font>")->setBgMedia(asset('pictures/data.png'));
                 } else {
-                    $button = (new Button())->setText("")->setBgColor(config('keyboard.button_color'));
+                    $button = (new Button())->setText("")->setBgColor(config('viber.keyboard.button_color'));
                 } // if empty day
-                $buttons[] = $button->setActionType('reply')
+                                $buttons[] = $button->setActionType('reply')
                     ->setActionBody($calendar[$x][$y] > $today ? $calendar[$x][$y] : 0)
                     ->setColumns(1)
                     ->setRows(1);
@@ -708,61 +703,61 @@ class WebhookController extends Controller
         $session->last_message_id = 5;
         $session->save();
         $buttons = array();
-        $buttons[] = (new Button())->setText('09:00')
+        $buttons[] = (new Button())->setText($this->whiteFont('09:00'))
             ->setActionType('reply')
             ->setActionBody('09:00')
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-        $buttons[] = (new Button())->setText('10:00')
+        $buttons[] = (new Button())->setText($this->whiteFont('10:00'))
             ->setActionType('reply')
             ->setActionBody('10:00')
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-        $buttons[] = (new Button())->setText('11:00')
+        $buttons[] = (new Button())->setText($this->whiteFont('11:00'))
             ->setActionType('reply')
             ->setActionBody('11:00')
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-        $buttons[] = (new Button())->setText('12:00')
+        $buttons[] = (new Button())->setText($this->whiteFont('12:00'))
             ->setActionType('reply')
             ->setActionBody('12:00')
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-        $buttons[] = (new Button())->setText('13:30')
+        $buttons[] = (new Button())->setText($this->whiteFont('13:30'))
             ->setActionType('reply')
             ->setActionBody('13:30')
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-        $buttons[] = (new Button())->setText('14:30')
+        $buttons[] = (new Button())->setText($this->whiteFont('14:30'))
             ->setActionType('reply')
             ->setActionBody('14:30')
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-        $buttons[] = (new Button())->setText('15:30')
+        $buttons[] = (new Button())->setText($this->whiteFont('15:30'))
             ->setActionType('reply')
             ->setActionBody('15:30')
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-        $buttons[] = (new Button())->setText('16:00')
+        $buttons[] = (new Button())->setText($this->whiteFont('16:00'))
             ->setActionType('reply')
             ->setActionBody('16:00')
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-        $buttons[] = (new Button())->setText('17:00')
+        $buttons[] = (new Button())->setText($this->whiteFont('17:00'))
             ->setActionType('reply')
             ->setActionBody('17:00')
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-        $buttons[] = (new Button())->setText('18:00')
+        $buttons[] = (new Button())->setText($this->whiteFont('18:00'))
             ->setActionType('reply')
             ->setActionBody('18:00')
             ->setColumns(6)
@@ -788,15 +783,14 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.restart'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.restart')))
             ->setActionType('reply')
             ->setActionBody('restart')
             ->setSilent(true)
             ->setColumns(6)
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'));
-
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+$response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.goodby'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -814,13 +808,12 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
             ->setBgMedia(asset('pictures/one.png'));
-
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+$response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.11'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -838,19 +831,17 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
             ->setBgMedia(asset('pictures/one.png'));
-
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+$response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.12'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
-
-        Log::debug('sendMessage response');
+Log::debug('sendMessage response');
         if ($response !== null) {
             Log::debug($response->getData());
         } // if response not null
@@ -863,7 +854,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -872,7 +863,7 @@ class WebhookController extends Controller
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.last_time', [
-            'time' => $session->procedure_at->subHours(1)
+            'time' => $session->procedure_at->subHours(1)->format(config('viber.datetime_format'))
         ]))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
@@ -884,12 +875,12 @@ class WebhookController extends Controller
 
     private function sendMessage14(ViberUser $user, Session $session)
     {
-        Log::debug('WebhookController->sendMessage13');
-        $session->last_message_id = 13;
+        Log::debug('WebhookController->sendMessage14');
+        $session->last_message_id = 14;
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -913,7 +904,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -937,7 +928,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -961,7 +952,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -970,7 +961,7 @@ class WebhookController extends Controller
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.last_time', [
-            'time' => $session->procedure_at->subHours(3)
+            'time' => $session->procedure_at->subHours(3)->format(config('viber.datetime_format'))
         ]))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
@@ -987,7 +978,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -1011,7 +1002,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -1035,7 +1026,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -1059,7 +1050,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -1083,7 +1074,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -1107,7 +1098,7 @@ class WebhookController extends Controller
         $session->save();
 
         $buttons = array();
-        $buttons[] = (new Button())->setText(__('message.next'))
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.next')))
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
@@ -1116,7 +1107,7 @@ class WebhookController extends Controller
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.last_time', [
-            'time' => $session->procedure_at->subHours(3)
+            'time' => $session->procedure_at->subHours(3)->format(config('viber.datetime_format'))
         ]))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
@@ -1154,4 +1145,9 @@ class WebhookController extends Controller
 
         return $calendar;
     }
+    
+    private function whiteFont($text) {
+        return "<font color='".config('viber.color.white')."><b>$text</b></font>";
+    }
+    
 }
