@@ -82,9 +82,9 @@ class WebhookController extends Controller
     private function handleMessage(Request $request)
     {
         Log::debug("WebhookController->handleMessage");
-                try {
+        try {
             $user = $this->getViberUser($request->input('sender'));
-                        if (! $user->subscribed) {
+            if (! $user->subscribed) {
                 $user->subscribed = true;
                 $user->session_id = null;
                 $user->save();
@@ -372,7 +372,7 @@ class WebhookController extends Controller
             $this->sendMessage12($user, $session);
             return;
         } // if empty
-if ($request['message']['text'] == 'next') {
+        if ($request['message']['text'] == 'next') {
             $this->sendMessage13($user, $session);
         } else {
             $this->sendMessage12($user, $session);
@@ -386,7 +386,7 @@ if ($request['message']['text'] == 'next') {
             $this->sendMessage13($user, $session);
             return;
         } // if empty
-if ($request['message']['text'] == 'next') {
+        if ($request['message']['text'] == 'next') {
             $this->sendMessage14($user, $session);
         } else {
             $this->sendMessage13($user, $session);
@@ -400,7 +400,7 @@ if ($request['message']['text'] == 'next') {
             $this->sendMessage14($user, $session);
             return;
         } // if empty
-if ($request['message']['text'] == 'next') {
+        if ($request['message']['text'] == 'next') {
             $this->sendMessage15($user, $session);
         } else {
             $this->sendMessage14($user, $session);
@@ -414,7 +414,7 @@ if ($request['message']['text'] == 'next') {
             $this->sendMessage15($user, $session);
             return;
         } // if empty
-if ($request['message']['text'] == 'next') {
+        if ($request['message']['text'] == 'next') {
             $this->sendMessage6($user, $session);
         } else {
             $this->sendMessage15($user, $session);
@@ -577,12 +577,16 @@ if ($request['message']['text'] == 'next') {
             ->setActionType('reply')
             ->setActionBody('drug1')
             ->setColumns(3)
-            ->setBgMedia(asset('pictures/two.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont(__('message.drug2')))
             ->setActionType('reply')
             ->setActionBody('drug2')
             ->setColumns(3)
-            ->setBgMedia(asset('pictures/two.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -600,18 +604,22 @@ if ($request['message']['text'] == 'next') {
         Log::debug('WebhookController->sendMessage2');
         $session->last_message_id = 2;
         $session->save();
-        
+
         $buttons = array();
         $buttons[] = (new Button())->setText($this->whiteFont(__('message.stage.1')))
             ->setActionType('reply')
             ->setActionBody('1')
             ->setColumns(3)
-            ->setBgMedia(asset('pictures/two.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont(__('message.stage.2')))
             ->setActionType('reply')
             ->setActionBody('2')
             ->setColumns(3)
-            ->setBgMedia(asset('pictures/two.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -635,12 +643,16 @@ if ($request['message']['text'] == 'next') {
             ->setActionType('reply')
             ->setActionBody('0')
             ->setColumns(3)
-            ->setBgMedia(asset('pictures/two.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont(__('message.month.' . ($month < 12 ? $month + 1 : 1))))
             ->setActionType('reply')
             ->setActionBody('1')
             ->setColumns(3)
-            ->setBgMedia(asset('pictures/two.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -676,12 +688,13 @@ if ($request['message']['text'] == 'next') {
                     } // if today
                     $button = (new Button())->setText("<font color='$fontColor'><b>" . $calendar[$x][$y] . "</b></font>")->setBgMedia(asset('pictures/data.png'));
                 } else {
-                    $button = (new Button())->setText("")->setBgColor(config('viber.keyboard.button_color'));
+                    $button = (new Button())->setText("");
                 } // if empty day
-                                $buttons[] = $button->setActionType('reply')
+                $buttons[] = $button->setActionType('reply')
                     ->setActionBody($calendar[$x][$y] > $today ? $calendar[$x][$y] : 0)
                     ->setColumns(1)
-                    ->setRows(1);
+                    ->setRows(1)
+                    ->setBgColor(config('viber.keyboard.button_color'));
             } // for x
         } // for y
 
@@ -706,63 +719,83 @@ if ($request['message']['text'] == 'next') {
         $buttons[] = (new Button())->setText($this->whiteFont('09:00'))
             ->setActionType('reply')
             ->setActionBody('09:00')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont('10:00'))
             ->setActionType('reply')
             ->setActionBody('10:00')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont('11:00'))
             ->setActionType('reply')
             ->setActionBody('11:00')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont('12:00'))
             ->setActionType('reply')
             ->setActionBody('12:00')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont('13:30'))
             ->setActionType('reply')
             ->setActionBody('13:30')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont('14:30'))
             ->setActionType('reply')
             ->setActionBody('14:30')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont('15:30'))
             ->setActionType('reply')
             ->setActionBody('15:30')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont('16:00'))
             ->setActionType('reply')
             ->setActionBody('16:00')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont('17:00'))
             ->setActionType('reply')
             ->setActionBody('17:00')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
         $buttons[] = (new Button())->setText($this->whiteFont('18:00'))
             ->setActionType('reply')
             ->setActionBody('18:00')
-            ->setColumns(6)
+            ->setColumns(3)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/two.png'))
+            ->setSilent(false)
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -789,8 +822,9 @@ if ($request['message']['text'] == 'next') {
             ->setSilent(true)
             ->setColumns(6)
             ->setRows(1)
-            ->setBgMedia(asset('pictures/one.png'));
-$response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.goodby'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -812,8 +846,9 @@ $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
-$response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.11'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -835,13 +870,14 @@ $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
-$response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.12'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
-Log::debug('sendMessage response');
+        Log::debug('sendMessage response');
         if ($response !== null) {
             Log::debug($response->getData());
         } // if response not null
@@ -858,12 +894,14 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.last_time', [
-            'time' => $session->procedure_at->subHours(1)->format(config('viber.datetime_format'))
+            'time' => $session->procedure_at->subHours(1)
+                ->format(config('viber.datetime_format'))
         ]))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
@@ -884,7 +922,8 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -908,7 +947,8 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -932,7 +972,8 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -956,12 +997,14 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.last_time', [
-            'time' => $session->procedure_at->subHours(3)->format(config('viber.datetime_format'))
+            'time' => $session->procedure_at->subHours(3)
+                ->format(config('viber.datetime_format'))
         ]))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
@@ -982,7 +1025,8 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -1006,7 +1050,8 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -1030,7 +1075,8 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -1054,7 +1100,8 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -1078,7 +1125,8 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
@@ -1102,12 +1150,14 @@ Log::debug('sendMessage response');
             ->setActionType('reply')
             ->setActionBody('next')
             ->setSilent(true)
-            ->setBgMedia(asset('pictures/one.png'));
+            ->setBgMedia(asset('pictures/one.png'))
+            ->setBgColor(config('viber.keyboard.button_color'));
 
         $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText(__('message.last_time', [
-            'time' => $session->procedure_at->subHours(3)->format(config('viber.datetime_format'))
+            'time' => $session->procedure_at->subHours(3)
+                ->format(config('viber.datetime_format'))
         ]))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
             ->setButtons($buttons)));
@@ -1145,9 +1195,9 @@ Log::debug('sendMessage response');
 
         return $calendar;
     }
-    
-    private function whiteFont($text) {
-        return "<font color='".config('viber.color.white')."><b>$text</b></font>";
+
+    private function whiteFont($text)
+    {
+        return "<font color='" . config('viber.color.white') . "'><b>$text</b></font>";
     }
-    
 }

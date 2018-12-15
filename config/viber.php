@@ -9,7 +9,7 @@ return [
 
     'keyboard' => [
         'bg_color' => '#f6f7f9',
-        'button_color' => '#fdfdfd'
+                'button_color' => '#F6F7F9'
     ],
     "color" => [
         "gray" => "#D7D7D7",
@@ -17,5 +17,5 @@ return [
         "black" => "#1C1C1C",
         "white" => "#FFFFFF"
     ],
-    "datetime_format" => "H-i d-m-Y"
+    "datetime_format" => "H:i d.m.Y"
 ];
