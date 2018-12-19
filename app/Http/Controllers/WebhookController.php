@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Viber\Api\Event\Type;
+use Viber\Api\Message\Picture;
 use Viber\Api\Message\Text;
 use Viber\Api\Sender;
 use Viber\Api\Keyboard;
@@ -184,7 +185,7 @@ class WebhookController extends Controller
             return;
         } // if empty
 
-        switch ($request['message']['text']) {
+        switch ($this->recognizeDrug($request['message']['text'])) {
             case 'drug1':
                 $session->stage_num = 2;
                 $session->save();
@@ -193,7 +194,7 @@ class WebhookController extends Controller
                     $session->id
                 ]);
                 $session = $session->find($session->id);
-                $this->sendMessage3($user, $session);
+                $this->sendMessage3($user, $session, __('message.drug1_choose'), true);
                 break;
             case 'drug2':
                 DB::update("update sessions set drug_id=(select id from drugs where code=?) where id=?", [
@@ -201,7 +202,7 @@ class WebhookController extends Controller
                     $session->id
                 ]);
                 $session = Session::where('id', $session->id)->with('drug')->first();
-                $this->sendMessage2($user, $session);
+                $this->sendMessage2($user, $session, __('message.drug2_choose'), true);
                 break;
             default:
                 Log::debug('default');
@@ -211,11 +212,11 @@ class WebhookController extends Controller
 
     private function handleMessage2(ViberUser $user, Session $session, Request $request)
     {
-        if (! isset($request['message']) || ! isset($request['message']['text']) || (is_string($request['message']['text'] && ! ctype_digit($request['message']['text'])))) {
+        if (! isset($request['message']) || ! isset($request['message']['text'])) {
             $this->sendMessage2($user, $session, __('message.wrong.stage'));
             return;
         } // if empty
-        $stageNum = (int) $request['message']['text'];
+        $stageNum = $this->recognizeStageNum($request['message']['text']);
         if ($stageNum < 1 || $stageNum > 2) {
             $this->sendMessage2($user, $session, __('message.wrong.stage'));
             return;
@@ -228,12 +229,12 @@ class WebhookController extends Controller
 
     private function handleMessage3(ViberUser $user, Session $session, Request $request)
     {
-        if (! isset($request['message']) || ! isset($request['message']['text']) || (is_string($request['message']['text']) && ! ctype_digit($request['message']['text']))) {
+        if (! isset($request['message']) || ! isset($request['message']['text'])) {
             $this->sendMessage3($user, $session, __('message.wrong.month'));
             return;
         } // if empty
-        $month = (int) $request['message']['text'];
-        if ($month > 1) {
+        $month = $this->recognizeMonth($request['message']['text']);
+        if ($month < 0 || $month > 1) {
             $this->sendMessage3($user, $session, __('message.wrong.month'));
             return;
         } // if not month
@@ -346,7 +347,7 @@ class WebhookController extends Controller
             $user->save();
             $this->sendMessage1($user, $session);
         } else {
-            $this->sendMessage11($user, $session);
+            $this->sendMessage6($user, $session);
         } // if restart
     }
 
@@ -599,7 +600,7 @@ class WebhookController extends Controller
         } // if response not null
     }
 
-    private function sendMessage2(ViberUser $user, Session $session, $prefix = "")
+    private function sendMessage2(ViberUser $user, Session $session, $prefix = "", $hasPicture = false)
     {
         Log::debug('WebhookController->sendMessage2');
         $session->last_message_id = 2;
@@ -621,7 +622,12 @@ class WebhookController extends Controller
             ->setSilent(false)
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        if ($hasPicture) {
+            $message = (new Picture())->setMedia(asset('pictures/fortrans.jpg'))->setThumbnail(asset('pictures/fortrans.jpg'));
+        } else {
+            $message = new Text();
+        } // if haspicture
+        $response = app('viber_bot')->sendMessage($message->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText($prefix . __('message.2'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -631,7 +637,7 @@ class WebhookController extends Controller
         } // if response not null
     }
 
-    private function sendMessage3(ViberUser $user, Session $session, $prefix = "")
+    private function sendMessage3(ViberUser $user, Session $session, $prefix = "", $hasPicture = false)
     {
         Log::debug('WebhookController->sendMessage3');
         $session->last_message_id = 3;
@@ -653,8 +659,13 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/two.png'))
             ->setSilent(false)
             ->setBgColor(config('viber.keyboard.button_color'));
+        if ($hasPicture) {
+            $message = (new Picture())->setMedia(asset('pictures/Iziklin.jpg'))->setThumbnail(asset('pictures/Iziklin.jpg'));
+        } else {
+            $message = new Text();
+        } // if haspicture
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage($message->setSender((new Sender())->setName(config('viber.bot.name')))
             ->setReceiver($user->viber_id)
             ->setText($prefix . __('message.3'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -1199,5 +1210,46 @@ class WebhookController extends Controller
     private function whiteFont($text)
     {
         return "<font color='" . config('viber.color.white') . "'><b>$text</b></font>";
+    }
+
+    private function recognizeDrug($drug)
+    {
+        if ($drug == 'drug1' || $drug == 'drug2') {
+            return $drug;
+        } // if code
+        if (in_array($drug, config('vocabulary.drug1'))) {
+            return 'drug1';
+        } elseif (in_array($drug, config('vocabulary.drug2'))) {
+            return 'drug2';
+        } // if recognize
+        return "";
+    }
+
+    private function recognizeStageNum($stageNum)
+    {
+        if (ctype_digit((string) $stageNum)) {
+            return (int) $stageNum;
+        } elseif (in_array($stageNum, config('vocabulary.stage1'))) {
+            return 1;
+        } elseif (in_array($stageNum, config('vocabulary.stage2'))) {
+            return 2;
+        } // if vocabulary
+        return 0;
+    }
+
+    public function recognizeMonth($month)
+    {
+        if (ctype_digit((string) $month)) {
+            return (int) $month;
+        } // if digit
+        $m = Carbon::now()->month;
+        if (in_array($month, config("vocabulary.month.$m"))) {
+            return 0;
+        } // if m0
+        $m = $m == 12 ? 1 : $m + 1;
+        if (in_array($month, config("vocabulary.month.$m"))) {
+            return 1;
+        } // if m1
+        return - 1;
     }
 }
