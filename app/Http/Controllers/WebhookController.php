@@ -247,13 +247,14 @@ class WebhookController extends Controller
     private function handleMessage4(ViberUser $user, Session $session, Request $request)
     {
         Log::debug('handleMessage4');
-        if (! isset($request['message']) || ! isset($request['message']['text']) || (is_string($request['message']['text']) && ! ctype_digit($request['message']['text']))) {
-            Log::debug('message is empty');
-            $this->sendMessage4($user, $session, __('message.wrong.day'));
+        if (! isset($request['message']) || ! isset($request['message']['text']) || !ctype_digit((string) $request['message']['text'])) {
+                        $this->sendMessage4($user, $session, __('message.wrong.day'));
             return;
         } // if empty
         $day = (int) $request['message']['text'];
-        if ($day < 1 || $day > $session->procedure_at->daysInMonth) {
+        $now = Carbon::now();
+        $today = $now->month == $session->month ? $now->day : 0;
+                if ($day <= $today || $day > $session->procedure_at->daysInMonth) {
             $this->sendMessage4($user, $session, __('message.wrong.day'));
             return;
         } // if not day
