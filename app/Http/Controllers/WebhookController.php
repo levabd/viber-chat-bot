@@ -44,7 +44,8 @@ class WebhookController extends Controller
         Log::debug("WebhookController->handleConversation");
         try {
             $this->getViberUser($request->input('user'));
-            $response = (new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+            $response = (new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+                ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
                 ->setText(__('message.welcome'));
             return response()->json($response->toArray());
         } catch (\Exception $e) {
@@ -247,14 +248,14 @@ class WebhookController extends Controller
     private function handleMessage4(ViberUser $user, Session $session, Request $request)
     {
         Log::debug('handleMessage4');
-        if (! isset($request['message']) || ! isset($request['message']['text']) || !ctype_digit((string) $request['message']['text'])) {
-                        $this->sendMessage4($user, $session, __('message.wrong.day'));
+        if (! isset($request['message']) || ! isset($request['message']['text']) || ! ctype_digit((string) $request['message']['text'])) {
+            $this->sendMessage4($user, $session, __('message.wrong.day'));
             return;
         } // if empty
         $day = (int) $request['message']['text'];
         $now = Carbon::now();
         $today = $now->month == $session->month ? $now->day : 0;
-                if ($day <= $today || $day > $session->procedure_at->daysInMonth) {
+        if ($day <= $today || $day > $session->procedure_at->daysInMonth) {
             $this->sendMessage4($user, $session, __('message.wrong.day'));
             return;
         } // if not day
@@ -560,7 +561,8 @@ class WebhookController extends Controller
     private function sendWelcome(ViberUser $user)
     {
         Log::debug('WebhookController->sendWelcome');
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.welcome')));
         if ($response !== null) {
@@ -590,7 +592,8 @@ class WebhookController extends Controller
             ->setSilent(false)
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText($prefix . __('message.1'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -628,7 +631,8 @@ class WebhookController extends Controller
         } else {
             $message = new Text();
         } // if haspicture
-        $response = app('viber_bot')->sendMessage($message->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage($message->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText($prefix . __('message.2'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -666,7 +670,8 @@ class WebhookController extends Controller
             $message = new Text();
         } // if haspicture
 
-        $response = app('viber_bot')->sendMessage($message->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage($message->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText($prefix . __('message.3'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -710,7 +715,8 @@ class WebhookController extends Controller
             } // for x
         } // for y
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText($prefix . __('message.4'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -809,7 +815,8 @@ class WebhookController extends Controller
             ->setSilent(false)
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText($prefix . __('message.5'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -836,7 +843,8 @@ class WebhookController extends Controller
             ->setRows(1)
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.goodby'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -860,7 +868,8 @@ class WebhookController extends Controller
             ->setSilent(true)
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.11'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -884,7 +893,8 @@ class WebhookController extends Controller
             ->setSilent(true)
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.12'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -909,7 +919,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.last_time', [
             'time' => $session->procedure_at->subHours(1)
@@ -937,7 +948,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.14'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -962,7 +974,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.15'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -987,7 +1000,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.211'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -1012,7 +1026,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.last_time', [
             'time' => $session->procedure_at->subHours(3)
@@ -1040,7 +1055,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.21'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -1065,7 +1081,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.22'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -1090,7 +1107,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.23'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -1115,7 +1133,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.221'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -1140,7 +1159,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.222'))
             ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
@@ -1165,7 +1185,8 @@ class WebhookController extends Controller
             ->setBgMedia(asset('pictures/one.png'))
             ->setBgColor(config('viber.keyboard.button_color'));
 
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name')))
+        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
             ->setReceiver($user->viber_id)
             ->setText(__('message.last_time', [
             'time' => $session->procedure_at->subHours(3)

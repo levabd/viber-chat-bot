@@ -4,12 +4,13 @@ return [
     'webhook_url' => env('APP_URL') . '/api/webhook',
 
     'bot' => [
-        'name' => 'Chat bot'
+        'name' => 'Анастасія',
+        'avatar' => 'assistant.jpg'
     ],
 
     'keyboard' => [
         'bg_color' => '#f6f7f9',
-                'button_color' => '#F6F7F9'
+        'button_color' => '#F6F7F9'
     ],
     "color" => [
         "gray" => "#D7D7D7",
