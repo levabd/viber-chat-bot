@@ -47,7 +47,7 @@ class WebhookTest extends TestCase
         Log::debug($content);
     }
 
-    public function estHandleSubscribed()
+    public function testHandleSubscribed()
     {
         Log::debug('testHandleSubscribed');
         $this->mock->shouldReceive('sendMessage')->once();
@@ -75,7 +75,7 @@ class WebhookTest extends TestCase
         $this->assertTrue(! $user->subscribed, 'user subscribed');
     }
 
-    public function estMessages()
+    public function testMessages()
     {
         Log::debug("testMessages");
         $this->mock->shouldReceive('sendMessage')->times(6);

@@ -43,10 +43,19 @@ class WebhookController extends Controller
     {
         Log::debug("WebhookController->handleConversation");
         try {
-            $this->getViberUser($request->input('user'));
+            $user = $this->getViberUser($request->input('user'));
+            $session = Session::create([
+                'user_id' => $user->id,
+                'last_message_id' => 1
+            ]);
+            $user->session_id = $session->id;
+            $user->save();
+            /*
             $response = (new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
                 ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
                 ->setText(__('message.welcome'));
+                */
+            $response = $this->getMessage1($user, __('message.welcome'));
                         return response()->json($response->toApiArray());
         } catch (\Exception $e) {
             Log::error($e);
@@ -570,34 +579,38 @@ class WebhookController extends Controller
         } // if response
     }
 
+    private function getMessage1(ViberUser $user, $prefix = "") {
+                $buttons = array();
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.drug1')))
+        ->setActionType('reply')
+        ->setActionBody('drug1')
+        ->setColumns(3)
+        ->setBgMedia(asset('pictures/two.png'))
+        ->setSilent(false)
+        ->setBgColor(config('viber.keyboard.button_color'));
+        $buttons[] = (new Button())->setText($this->whiteFont(__('message.drug2')))
+        ->setActionType('reply')
+        ->setActionBody('drug2')
+        ->setColumns(3)
+        ->setBgMedia(asset('pictures/two.png'))
+        ->setSilent(false)
+        ->setBgColor(config('viber.keyboard.button_color'));
+        
+        return (new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
+            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
+            ->setReceiver($user->viber_id)
+            ->setText($prefix . __('message.1'))
+            ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
+                ->setButtons($buttons));
+        }
+    
     private function sendMessage1(ViberUser $user, Session $session, $prefix = "")
     {
         Log::debug('WebhookController->sendMessage1');
         $session->last_message_id = 1;
         $session->save();
 
-        $buttons = array();
-        $buttons[] = (new Button())->setText($this->whiteFont(__('message.drug1')))
-            ->setActionType('reply')
-            ->setActionBody('drug1')
-            ->setColumns(3)
-            ->setBgMedia(asset('pictures/two.png'))
-            ->setSilent(false)
-            ->setBgColor(config('viber.keyboard.button_color'));
-        $buttons[] = (new Button())->setText($this->whiteFont(__('message.drug2')))
-            ->setActionType('reply')
-            ->setActionBody('drug2')
-            ->setColumns(3)
-            ->setBgMedia(asset('pictures/two.png'))
-            ->setSilent(false)
-            ->setBgColor(config('viber.keyboard.button_color'));
-
-        $response = app('viber_bot')->sendMessage((new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
-            ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
-            ->setReceiver($user->viber_id)
-            ->setText($prefix . __('message.1'))
-            ->setKeyboard((new Keyboard())->setBgColor(config('viber.keyboard.bg_color'))
-            ->setButtons($buttons)));
+        $response = app('viber_bot')->sendMessage($this->getMessage1($user, $prefix));
         Log::debug('sendMessage response');
         if ($response !== null) {
             Log::debug($response->getData());
