@@ -7,7 +7,7 @@ function monthStatistic($date)
     // pgsql
     // $statistic = DB::select("select count(*) as count, day from (select date_part('year', procedure_at) as year, date_part('month', procedure_at) as month, date_part('day', procedure_at) as day from sessions where procedure_at >= ? and procedure_at < ? and last_message_id > 5) as date_part_sessions group by date_part_sessions.year, date_part_sessions.month, date_part_sessions.day", [
     // mysql
-    $statistic = DB::select("select count(*) as count, day from (select year(procedure_at) as year, MONTH(procedure_at) as month, day(procedure_at) as day from sessions where procedure_at >= ? and procedure_at < ? and last_message_id > 5) as date_part_sessions group by date_part_sessions.year, date_part_sessions.month, date_part_sessions.day", [
+    $statistic = DB::select("select count(*) as count, day from (select year(procedure_at) as year, MONTH(procedure_at) as month, day(procedure_at) as day from sessions where procedure_at >= ? and procedure_at < ? and id in (select completed_session_id from viber_users where completed_session_id is not null)) as date_part_sessions group by date_part_sessions.year, date_part_sessions.month, date_part_sessions.day", [
         $date->copy()->startOfMonth(),
         $date->copy()
             ->addMonths(1)
@@ -25,5 +25,5 @@ function monthStatistic($date)
 
 function totalDrugStatistic()
 {
-    return DB::select("select drugs.name, drug_statistic.count from drugs inner join (select drug_id, count(*) as count from sessions where drug_id is not null group by drug_id) as drug_statistic on drugs.id = drug_statistic.drug_id", []);
+    return DB::select("select drugs.name, drug_statistic.count from drugs inner join (select drug_id, count(*) as count from sessions where drug_id is not null and id in (select completed_session_id from viber_users) group by drug_id) as drug_statistic on drugs.id = drug_statistic.drug_id", []);
 }
