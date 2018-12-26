@@ -561,7 +561,7 @@ class WebhookController extends Controller
         if ($viberUser === null) {
             $viberUser = ViberUser::create([
                 'viber_id' => $user['id'],
-                'name' => $user['name']
+                'name' => (array_key_exists('name', $user) && is_string($user['name']) && strlen($user['name'] > 0)) ? $user['name'] : 'пользователь неизвестен'
             ]);
         } // if viberUser is null
         return $viberUser;

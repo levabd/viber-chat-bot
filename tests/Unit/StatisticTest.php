@@ -54,6 +54,7 @@ private $viberUser;
         }//for
         $now = Carbon::now();
                 $statistic = monthStatistic($now);
+                Log::debug('month statistic');
                                 Log::debug($statistic);
                                 } catch(\Wxception $e) {
             Log::error($e);
