@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.21, for Linux (x86_64)
 --
--- Host: localhost    Database: ipsen_bot_db
+-- Host: localhost    Database: encoded5_ipsen
 -- ------------------------------------------------------
 -- Server version	5.7.21-0ubuntu0.16.04.1
 
@@ -16,12 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `ipsen_bot_db`
+-- Current Database: `encoded5_ipsen`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `ipsen_bot_db` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `encoded5_ipsen` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `ipsen_bot_db`;
+USE `encoded5_ipsen`;
 
 --
 -- Table structure for table `drugs`
@@ -61,7 +61,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,7 +70,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (25,'2014_10_12_000000_create_users_table',1),(26,'2014_10_12_100000_create_password_resets_table',1),(27,'2018_11_20_034126_create_viber_users_table',1),(28,'2018_11_23_155821_create_drugs_table',1),(29,'2018_11_23_155909_create_sessions_table',1),(30,'2018_11_23_165017_add_session_id_column_to_viber_users_table',1);
+INSERT INTO `migrations` VALUES (49,'2014_10_12_000000_create_users_table',1),(50,'2014_10_12_100000_create_password_resets_table',1),(51,'2018_11_20_034126_create_viber_users_table',1),(52,'2018_11_23_155821_create_drugs_table',1),(53,'2018_11_23_155909_create_sessions_table',1),(54,'2018_11_23_165017_add_session_id_column_to_viber_users_table',1);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -159,7 +159,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Admin','admin@encoded.ml',NULL,'$2y$10$wV8lg1FOllOLBU4MzecK6eu/A3Ti44/HMf2DAmjQRmgbeT9jvyVlC',NULL,'2018-12-15 14:03:21','2018-12-15 14:03:21');
+INSERT INTO `users` VALUES (1,'Admin','admin@encoded.ml',NULL,'$2y$10$qKNR9WwIZy539rk9vR2yeefHMo6q6SSCja.67mKV1vkK28D9T17ES',NULL,'2018-12-25 14:10:38','2018-12-25 14:10:38');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -206,4 +206,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-12-15 14:35:20
+-- Dump completed on 2018-12-25 14:14:42

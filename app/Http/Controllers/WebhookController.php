@@ -47,7 +47,7 @@ class WebhookController extends Controller
             $response = (new Text())->setSender((new Sender())->setName(config('viber.bot.name'))
                 ->setAvatar(asset('pictures/' . config('viber.bot.avatar'))))
                 ->setText(__('message.welcome'));
-            return response()->json($response->toArray());
+                        return response()->json($response->toAPiArray());
         } catch (\Exception $e) {
             Log::error($e);
         } // catch

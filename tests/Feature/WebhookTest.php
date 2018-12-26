@@ -43,11 +43,11 @@ class WebhookTest extends TestCase
         ]);
 
         $this->assertNotNull(ViberUser::where('viber_id', $counter)->first());
-        // $content = json_decode($response->content(), true);
-        // Log::debug($content);
+        $content = json_decode($response->content(), true);
+        Log::debug($content);
     }
 
-    public function testHandleSubscribed()
+    public function estHandleSubscribed()
     {
         Log::debug('testHandleSubscribed');
         $this->mock->shouldReceive('sendMessage')->once();
@@ -75,7 +75,7 @@ class WebhookTest extends TestCase
         $this->assertTrue(! $user->subscribed, 'user subscribed');
     }
 
-    public function testMessages()
+    public function estMessages()
     {
         Log::debug("testMessages");
         $this->mock->shouldReceive('sendMessage')->times(6);
