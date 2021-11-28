@@ -803,7 +803,7 @@
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "ext-openssl": "*",
-                "league/flysystem": "^1.0.8",
+                "league/flysystem": "^1.1.4",
                 "monolog/monolog": "^1.12",
                 "nesbot/carbon": "^1.26.3 || ^2.0",
                 "opis/closure": "^3.1",
@@ -998,7 +998,7 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.70",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
@@ -1015,7 +1015,7 @@
                 "php": ">=5.5.9"
             },
             "conflict": {
-                "league/flysystem-sftp": "<1.0.6"
+                "league/flysystem-sftp": "1.1.6"
             },
             "require-dev": {
                 "phpspec/phpspec": "^3.4 || ^4.0 || ^5.0 || ^6.0",
@@ -1080,7 +1080,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/1.0.70"
+                "source": "https://github.com/thephpleague/flysystem/tree/1.1.4"
             },
             "funding": [
                 {
